@@ -1,6 +1,5 @@
 /*
 Copyright 2012 Jun Wako <wakojun@gmail.com>
-Copyright 2015 Jack Humbert
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -18,21 +17,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
-#include "config_common.h"
+#define USE_SERIAL
 
-#ifndef SOFT_SERIAL_PIN
-#define SOFT_SERIAL_PIN D2
-#define SERIAL_USE_MULTI_TRANSACTION
-#endif
-
-#if !defined(NO_ACTION_MACRO)
-    #define NO_ACTION_MACRO
-#endif
-#if !defined(NO_ACTION_FUNCTION)
-    #define NO_ACTION_FUNCTION
-#endif
-
-#define DIODE_DIRECTION COL2ROW
-
-// Use the lily version to get the Lily58 logo instead of the qmk logo
-#define OLED_FONT_H "lib/glcdfont_lily.c"
+#define MASTER_RIGHT
+// #define MASTER_RIGHT
+//#define EE_HANDS
+// Rows are doubled-up
