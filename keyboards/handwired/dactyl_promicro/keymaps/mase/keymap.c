@@ -1,51 +1,115 @@
 #include QMK_KEYBOARD_H
+#include <stdio.h>
 
+enum layer_number {
+  _QWERTY = 0,
+  _LOWER,
+  _RAISE,
+  _ADJUST,
+};
 
-#define _QWERTY 0
-#define _LOWER 1
-#define _RAISE 2
-
-#define RAISE MO(_RAISE)
-#define LOWER MO(_LOWER)
-
-#define ONE_GRV LT(1,KC_GRAVE)
-#define CTL_Z LCTL_T(KC_Z)
-#define ALT_SHFT LALT(KC_LSFT)
-#define ALT_MENU LALT_T(KC_MENU)
+#define LWR_ENT LT(_LOWER, KC_ENT)
+#define UNDO LCTL(KC_Z)
+#define CTLZ CTL_T(KC_Z)
+#define CTLSLSH CTL_T(KC_SLSH)
 #define LG_QUOT LGUI_T(KC_QUOT)
-#define CTL_ESC LCTL_T(KC_ESC)
-#define CTL_SLS LCTL_T(KC_SLSH)
-#define LT2_COL LT(_RAISE, KC_SCLN)
+#define ALT_MNU LALT_T(KC_MENU)
+#define TD_LEFT TD(TD_HOME_LEFT)
+#define TD_RGT TD(TD_END_RIGHT)
+#define TD_UP TD(TD_PGUP_UP)
+#define TD_DOWN TD(TD_PGDWN_DOWN)
+#define RCS_RGT RCS(KC_RIGHT)
+#define RCS_LFT RCS(KC_LEFT)
+#define CTL_LFT LCTL(KC_LEFT)
+#define CTL_RGT LCTL(KC_RIGHT)
+#define TD_DELT TD(TD_DEL)
+#define RAISE MO(_RAISE)
+#define REDO LCTL(KC_Y)
+#define CTSTAR LCTL(LSFT(KC_LEFT))
+
+enum {
+  TD_HOME_LEFT,
+  TD_END_RIGHT,
+  TD_PGUP_UP,
+  TD_PGDWN_DOWN
+};
+
+tap_dance_action_t tap_dance_actions[] = {
+	[TD_HOME_LEFT]  = ACTION_TAP_DANCE_DOUBLE(KC_LEFT, KC_HOME),
+	[TD_END_RIGHT]  = ACTION_TAP_DANCE_DOUBLE(KC_RIGHT, KC_END),
+    [TD_PGUP_UP]    = ACTION_TAP_DANCE_DOUBLE(KC_UP, KC_PGUP),
+    [TD_PGDWN_DOWN] = ACTION_TAP_DANCE_DOUBLE(KC_DOWN, KC_PGDN)
+    };
+
+/* Keymap: 
+ *
+ * ,-----------------------------------------.                    ,-----------------------------------------.
+ * |   `  |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  |  -   |
+ * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+ * | Del  |   Q  |   W  |   E  |   R  |   T  |                    |   Y  |   U  |   I  |   O  |   P  |  \   |
+ * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+ * | Tab  |   A  |   S  |   D  |   F  |   G  |                    |   H  |   J  |   K  |   L  |   ;  |'/Cmd |
+ * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+ * |LShift|Z/Ctrl|   X  |   C  |   V  |   B  |                    |   N  |   M  |   ,  |   .  | /Ctrl|RShift|
+ * |------+------+------+------+------+------'                    `------+------+------+------+------+------|
+ * |Grv/L1|      |AltShf| Left | Right|                                  |  Up  | Down |      |      |      |
+ * `----------------------------------'                                  `----------------------------------'
+ *                                      ,-------------.  ,-------------.
+ *                                      | Undo | LGui |  | Alt  | ^/Esc|
+ *                               ,------|------|------|  |------+------+------.
+ *                               |      |      | Home |  | PgUp |      |      |
+ *                               | Space|LwrEnt|------|  |------|Raise |BackSP|
+ *                               |      |      | End  |  | PgDn |      |      |
+ *                               `--------------------'  `--------------------'
+ */
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_QWERTY] = LAYOUT_6x6(
-        KC_EQL , KC_1  ,KC_2   , KC_3  , KC_4  , KC_5  ,                                        KC_6   , KC_7  , KC_8  , KC_9  , KC_0  ,KC_BSPC,
-        KC_DEL , KC_Q  ,KC_W   , KC_E  , KC_R  , KC_T  ,                                        KC_Y   , KC_U  , KC_I  , KC_O  , KC_P  ,KC_MINS,
-        KC_BSPC, KC_A  ,KC_S   , KC_D  , KC_F  , KC_G  ,                                        KC_H   , KC_J  , KC_K  , KC_L  ,LT2_COL,LG_QUOT,
-        KC_LSFT, CTL_Z ,KC_X   , KC_C  , KC_V  , KC_B  ,                                        KC_N   , KC_M  ,KC_COMM, KC_DOT,CTL_SLS,KC_RSFT,
-        ONE_GRV,KC_QUOT,ALT_SHFT,KC_LEFT,KC_RGHT,KC_SPC ,                                       KC_ENT , KC_UP  ,KC_DOWN,KC_LBRC,KC_RBRC,TT(_LOWER),
-                                                KC_BSPC,ALT_MENU,KC_LGUI,       KC_RALT,CTL_ESC,KC_TAB ,
-                                                                KC_HOME,        KC_PGUP,
-                                                                KC_END ,        KC_PGDN
+        KC_GRV , KC_1   , KC_2   , KC_3   , KC_4   , KC_5   ,                                        KC_6   , KC_7   , KC_8   , KC_9   , KC_0   , KC_BSPC,
+        KC_ESC , KC_Q   , KC_W   , KC_E   , KC_R   , KC_T   ,                                        KC_Y   , KC_U   , KC_I   , KC_O   , KC_P   , KC_MINS,
+        KC_TAB , KC_A   , KC_S   , KC_D   , KC_F   , KC_G   ,                                        KC_H   , KC_J   , KC_K   , KC_L   , KC_SCLN, LG_QUOT,
+        KC_LSFT, CTLZ   , KC_X   , KC_C   , KC_V   , KC_B   ,                                        KC_N   , KC_M   , KC_COMM, KC_DOT , CTLSLSH, KC_RSFT,
+        QK_BOOT, DB_TOGG, XXXXXXX, CTSTAR , KC_LALT,                                                          XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, QK_BOOT,
+        UNDO   , KC_LGUI, KC_SPC , LWR_ENT, KC_HOME, KC_END ,                                        KC_RALT, KC_PGDN, KC_PGUP, RAISE  , KC_BSPC, KC_ESC  
     ),
     [_LOWER] = LAYOUT_6x6(
-        _______,KC_F1  ,KC_F2  ,KC_F3  ,KC_F4  ,KC_F5  ,                                       KC_F6  ,KC_F7  ,KC_F8  ,KC_F9  ,KC_F10 ,KC_F11 ,
-        _______,KC_EXLM,KC_AT  ,KC_LBRC,KC_RBRC,KC_PIPE,                                       KC_UP  ,KC_P7  ,KC_P8  ,KC_P9  ,KC_PAST,KC_F12 ,
-        _______,KC_HASH,KC_DLR ,KC_LPRN,KC_RPRN,KC_GRV ,                                       KC_DOWN,KC_P4  ,KC_P5  ,KC_P6  ,KC_PPLS,_______,
-        _______,KC_PERC,KC_CIRC,KC_LBRC,KC_RBRC,KC_TILD,                                       KC_AMPR,KC_P1  ,KC_P2  ,KC_P3  ,KC_PSLS,_______,
-        RESET  ,_______,_______,_______,_______,_______,                                       _______,_______,KC_PDOT,KC_P0  ,KC_PEQL,_______,
-                                                _______,_______,_______,       _______,_______,_______,
-                                                                _______,       _______,
-                                                                _______,       _______
+        _______, KC_F1  , KC_F2  , KC_F3  , KC_F4  , KC_F5  ,                                        KC_F6  , KC_F7  , KC_F8  , KC_F9  , KC_F10 , _______,
+        _______, XXXXXXX, RCS_LFT, TD_UP  , RCS_RGT, XXXXXXX,                                        KC_ASTR, KC_LBRC, KC_RBRC, KC_UNDS, KC_PIPE, _______,
+        _______, CTL_LFT, TD_LEFT, TD_DOWN, TD_RGT , CTL_RGT,                                        KC_EQL , KC_LPRN, KC_RPRN, KC_PERC, KC_EXLM, _______,
+        _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                                        KC_HASH, KC_LCBR, KC_RCBR, KC_AT  , KC_AMPR, _______,
+        _______, _______, _______, _______, _______, _______,                                        KC_DLR , _______, _______, _______, _______, _______,
+                                                     _______, _______, _______,    _______, _______, _______,
+                                                                       _______,    _______,
+                                                                       _______,    _______
     ),
     [_RAISE] = LAYOUT_6x6(
-        _______,_______,_______,_______,_______,_______,                                       _______,_______,_______,_______,_______,_______,
-        _______,_______,_______,KC_MS_U,_______,_______,                                       _______,_______,_______,_______,_______,_______,
-        _______,_______,KC_MS_L,KC_MS_D,KC_MS_R,_______,                                       _______,_______,_______,_______,_______,KC_MPLY,
-        _______,_______,_______,_______,_______,_______,                                       _______,_______,KC_MPRV,KC_MNXT,_______,_______,
-        RESET  ,_______,_______,KC_BTN1,KC_BTN2,_______,                                       KC_WBAK,KC_VOLU,KC_VOLD,KC_MUTE,_______,_______,
-                                                _______,_______,_______,       _______,_______,_______,
-                                                                _______,       _______,
-                                                                _______,       _______
+        _______, _______, _______, _______, _______, _______,                                        _______, _______, _______, _______, _______, _______,
+        _______, XXXXXXX, RCS_LFT, TD_UP  , RCS_RGT, XXXXXXX,                                        KC_PAST, KC_7   , KC_8   , KC_9   , KC_PMNS, _______,
+        _______, CTL_LFT, TD_LEFT, TD_DOWN, TD_RGT , CTL_RGT,                                        KC_PSLS, KC_4   , KC_5   , KC_6   , KC_PPLS, _______,
+        _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                                        KC_PDOT, KC_1   , KC_2   , KC_3   , KC_PAST, _______,
+        _______, _______, _______, _______, _______, _______,                                        _______, KC_0   , KC_0   , _______, _______, _______,
+                                                     _______, _______, _______,    _______, _______, _______,
+                                                                       _______,    _______,
+                                                                       _______,    _______
+    ),
+      [_ADJUST] = LAYOUT_6x6(
+        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                                        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        QK_BOOT, XXXXXXX, KC_MSTP, KC_VOLU, KC_MPLY, XXXXXXX,                                        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        XXXXXXX, XXXXXXX, KC_MNXT, KC_VOLD, KC_MNXT, XXXXXXX,                                        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                                        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+        XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, _______,                                        _______, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+                                                     _______, _______, _______,    _______, _______, _______,
+                                                                       _______,    _______,
+                                                                       _______,    _______
     )
 };
+
+void keyboard_post_init_user(void) {
+  // Customise these values to desired behaviour
+  debug_matrix=true;
+}
+
+layer_state_t layer_state_set_user(layer_state_t state) {
+    state = update_tri_layer_state(state, _RAISE, _LOWER, _ADJUST);
+    return state;
+}
