@@ -15,7 +15,7 @@
     "extrakey": true,
     "nkro": true,
     "unicode": true,
-    "swap_hands": true
+    "swap_hands": false
   },
   "debounce": 15,
   "tapping": {
