@@ -1,0 +1,11 @@
+usage: qmk json2c [-h] [-q] [-o OUTPUT] filename
+
+positional arguments:
+  filename              Configurator JSON file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -q, --quiet           Quiet mode, only output error messages
+  -o OUTPUT, --output OUTPUT
+                        File to write to
+[0m[0m[0m
